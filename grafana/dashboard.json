@@ -1,0 +1,103 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_INFLUX",
+      "label": "InfluxDB",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__requires": [
+    {"type": "grafana", "id": "grafana", "name": "Grafana", "version": "9.0.0"},
+    {"type": "panel", "id": "timeseries", "name": "Time series", "version": "9.0.0"},
+    {"type": "panel", "id": "bargauge", "name": "Bar Gauge", "version": "9.0.0"}
+  ],
+  "title": "IoT Classroom Sensors",
+  "timezone": "",
+  "panels": [
+    {
+      "datasource": "${DS_INFLUX}",
+      "fieldConfig": {"defaults": {"unit": "celsius"}},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "targets": [
+        {
+          "query": "SELECT mean(\"temperature_c\") FROM env_sensors WHERE $timeFilter GROUP BY time($__interval)",
+          "refId": "A"
+        }
+      ],
+      "title": "Temperature",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_INFLUX}",
+      "fieldConfig": {"defaults": {"unit": "percent"}},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 2,
+      "targets": [
+        {
+          "query": "SELECT mean(\"humidity_pct\") FROM env_sensors WHERE $timeFilter GROUP BY time($__interval)",
+          "refId": "A"
+        }
+      ],
+      "title": "Humidity",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_INFLUX}",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 3,
+      "targets": [
+        {
+          "query": "SELECT mean(\"light_adc\") FROM env_sensors WHERE $timeFilter GROUP BY time($__interval)",
+          "refId": "A"
+        }
+      ],
+      "title": "Light (ADC)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_INFLUX}",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 4,
+      "targets": [
+        {
+          "query": "SELECT mean(\"sound_adc\") FROM env_sensors WHERE $timeFilter GROUP BY time($__interval)",
+          "refId": "A"
+        }
+      ],
+      "title": "Sound (ADC)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_INFLUX}",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "id": 5,
+      "targets": [
+        {
+          "query": "SELECT mean(\"gas_adc\") FROM env_sensors WHERE $timeFilter GROUP BY time($__interval)",
+          "refId": "A"
+        }
+      ],
+      "title": "Gas (ADC)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_INFLUX}",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 6,
+      "targets": [
+        {
+          "query": "SELECT last(\"sector_0_pct\"), last(\"sector_1_pct\"), last(\"sector_2_pct\"), last(\"sector_3_pct\"), last(\"sector_4_pct\"), last(\"sector_5_pct\") FROM radar WHERE $timeFilter",
+          "rawQuery": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Radar Occupancy",
+      "type": "bargauge"
+    }
+  ],
+  "schemaVersion": 36,
+  "version": 1
+}

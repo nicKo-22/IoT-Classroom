@@ -1,0 +1,10 @@
+seeed-python-grove
+seeed-python-dht
+RPi.GPIO
+influxdb
+influxdb-client
+python-dotenv
+pyyaml
+apscheduler
+sqlite-utils
+pytest

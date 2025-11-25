@@ -1,0 +1,19 @@
+[Unit]
+Description=IoT Classroom telemetry service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/iot-classroom
+EnvironmentFile=/home/pi/iot-classroom/.env
+ExecStart=/home/pi/iot-classroom/.venv/bin/python -m main
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
