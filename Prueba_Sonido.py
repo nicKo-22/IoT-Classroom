@@ -1,9 +1,19 @@
 import time
 import math
+import os
 from grove.grove_sound_sensor import GroveSoundSensor
+
+from influxdb_client import InfluxDBClient, Point
+from influxdb_client.client.write_api import ASYNCHRONOUS
 
 SENSOR_PORT = 2      # A2
 ADC_MAX = 4095       # Resolución típica de la Base Hat (12 bits)
+
+# --- Configuración InfluxDB v2 ---
+URL    = "http://localhost:8086"
+ORG    = "Raspi11"            # tu organización en InfluxDB
+BUCKET = "bucket"             # tu bucket
+TOKEN  = "MgfAXCYjqqsoakt5PoFizhILIasQXaqAe2ue9iuWNoRaLI264Hj8gz3qBJNsgQ_oiSTPtMkCJSrn2WbFaqL17g=="  # o tu token en texto plano
 
 
 def leer_db(sensor, muestras=100, dt=0.002):
@@ -37,12 +47,34 @@ def leer_db(sensor, muestras=100, dt=0.002):
 
 def main():
     sensor = GroveSoundSensor(SENSOR_PORT)
-    print("Midiendo sonido en dB relativos en A2 (Ctrl+C para parar)")
+    print("Midiendo sonido en dB relativos en A2 y enviando a InfluxDB (Ctrl+C para parar)")
 
-    while True:
-        db = leer_db(sensor)
-        print("Nivel de sonido: {:.1f} dB".format(db))
-        time.sleep(0.5)
+    # Cliente InfluxDB
+    client = InfluxDBClient(url=URL, token=TOKEN, org=ORG)
+    write_api = client.write_api(write_options=ASYNCHRONOUS)
+
+    try:
+        while True:
+            db = leer_db(sensor)
+            print("Nivel de sonido: {:.1f} dB".format(db))
+
+            # Crear punto para InfluxDB
+            p = (
+                Point("sound_level")            # nombre de la medida
+                .tag("sensor", "sound_a2")      # etiqueta para filtrar
+                .field("sound_db", float(db))   # nivel de sonido en dB relativos
+            )
+
+            # Enviar a InfluxDB
+            write_api.write(bucket=BUCKET, org=ORG, record=p)
+
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        print("\nParado por el usuario.")
+    finally:
+        write_api.__del__()
+        client.__del__()
 
 
 if __name__ == '__main__':
