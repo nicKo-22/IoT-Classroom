@@ -1,4 +1,3 @@
-````markdown
 # CozyCampus 🏫🌿  
 **IoT classroom monitoring on Raspberry Pi (MVP)**
 
@@ -114,7 +113,7 @@ A helper module exists in `db_utils.py` for saving the report content and images
 Install core libraries:
 ```bash
 pip3 install influxdb-client mysql-connector-python pandas matplotlib
-````
+
 
 Sensor-specific packages depend on your Grove/Seeed setup.
 
@@ -223,12 +222,3 @@ The ultrasonic sensor measures distance while the servo sweeps. The system compu
 * Add `classroom_id` tags to all measurements for multi-room deployments.
 * Calibrate sensors (especially gas/noise) for more meaningful units.
 * Add alerting rules (high noise, poor air quality, low light) via Grafana.
-
----
-
-## License
-
-Educational prototype (course MVP). Add a LICENSE file if you plan to publish publicly.
-
-```
-```
